@@ -1,0 +1,46 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class Jump : MonoBehaviour
+{
+    public float jumpForce = 200f;
+    public float rayLength = 1.1f;
+
+    private Rigidbody rb;
+    private InputAction jump;
+
+    private bool canJump = true;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        jump = InputSystem.actions.FindAction("Jump");
+    }
+
+    void Update()
+    {
+        bool isGrounded = Physics.Raycast( transform.position, Vector3.down,rayLength);
+
+        Debug.DrawRay(transform.position, Vector3.down * rayLength, Color.red);
+
+        // Si está en el suelo, vuelve a permitir el salto
+        if (isGrounded)
+        {
+            canJump = true;
+        }
+
+        // Solo puede saltar si está en el suelo y todavía puede saltar
+        if (isGrounded && canJump && jump.WasPressedThisFrame())
+        {
+            
+            Jump();
+            canJump = false;
+        }
+    }
+
+    void Jump()
+    {
+        rb.AddForce(0, jumpForce, 0);
+    }
+
+}
