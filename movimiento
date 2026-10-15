@@ -1,0 +1,68 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class Clase2Mov : MonoBehaviour
+{
+    private Rigidbody rb;
+
+    private Vector2 input;
+
+    public float moveSpeed = 5f;
+
+    private float ogSpeed;
+
+    [SerializeField] private float multSpeed;
+    [SerializeField] private float valMultSpeed = 1.5f;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+
+        ogSpeed = moveSpeed;
+        multSpeed = moveSpeed * valMultSpeed;
+    }
+
+    void Update()
+    {
+        // Leer el Input. El action ya contiene los ejes necesarios
+        input = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
+
+
+
+        // Leer Sprint
+        if (InputSystem.actions.FindAction("Sprint").IsPressed())
+        {
+            moveSpeed = multSpeed;
+        }
+        else
+        {
+            moveSpeed = ogSpeed;
+        }
+        Debug.Log(rb.linearVelocity);
+    }
+
+    void FixedUpdate()
+    {
+        //---- Version antigua ----
+        /*
+        float inputX = Input.GetAxisRaw("Horizontal");
+        float inputY = Input.GetAxisRaw("Vertical");
+        Vector3 movement = new Vector3(inputX, 0, inputY);
+        */
+
+        // ---- Version Nueva ----
+        // Convertir Vector2 a Vector3
+       Vector3 movement = new Vector3(input.x, 0,input.y );
+
+        movement = movement.normalized;
+
+
+        // Mover según la dirección del jugador
+        //cambia los valores para que sean en referencia a los
+        //mismos ejes del jugador y no del mundo
+        movement = transform.TransformDirection(movement);
+
+        // Aplicar la velocidad al Rigidbody
+        rb.linearVelocity = new Vector3( movement.x * moveSpeed, rb.linearVelocity.y, movement.z * moveSpeed   );
+    }
+}
