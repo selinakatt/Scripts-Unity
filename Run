@@ -1,0 +1,33 @@
+using UnityEngine;
+
+public class Run : MonoBehaviour
+{
+    [Header("Ajustes de Velocidad")]
+    [Tooltip("Velocidad normal al caminar")]
+    public float walkSpeed = 5f;
+
+    [Tooltip("Velocidad al presionar la tecla de correr")]
+    public float runSpeed = 10f;
+
+    [Header("Controles")]
+    [Tooltip("Tecla asignada para activar el modo correr")]
+    public KeyCode runKey = KeyCode.LeftShift;
+
+    // Propiedad pública que los otros scripts pueden consultar para saber si el personaje está corriendo
+    public bool IsRunning { get; private set; }
+
+    // Retorna la velocidad actual según si se está presionando la tecla o no
+    public float CurrentSpeed
+    {
+        get
+        {
+            return IsRunning ? runSpeed : walkSpeed;
+        }
+    }
+
+    void Update()
+    {
+        // Detectar si la tecla configurada está siendo mantenida
+        IsRunning = Input.GetKey(runKey);
+    }
+}
